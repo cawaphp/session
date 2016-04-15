@@ -15,7 +15,7 @@ namespace Cawa\Session\Orm;
 
 use Cawa\Session\SessionFactory;
 
-trait Session
+trait SessionTrait
 {
     use SessionFactory;
 
@@ -31,7 +31,7 @@ trait Session
         }
 
         $data = $this;
-        if (in_array(SessionSleep::class, class_uses($this))) {
+        if (in_array(SessionSleepTrait::class, class_uses($this))) {
             $data = $this->sessionSleep();
         }
 

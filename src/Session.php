@@ -30,7 +30,7 @@ class Session
     private $storage;
 
     /**
-     * Session constructor.
+     * SessionTrait constructor.
      */
     public function __construct()
     {
