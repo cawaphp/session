@@ -13,7 +13,7 @@ declare (strict_types=1);
 
 namespace Cawa\Session;
 
-use Cawa\App\App;
+use Cawa\App\HttpApp;
 use Cawa\Core\DI;
 use Cawa\Events\DispatcherFactory;
 use Cawa\Events\TimerEvent;
@@ -49,7 +49,7 @@ class Session
         $callable = function () {
             // this exception will not be displayed, instead "FatalErrorException"
             // with "Error: session_start(): Failed to initialize storage module: user (path: /var/lib/php/sessions)"
-            throw new \LogicException('Cannot used internal session in Сáша App');
+            throw new \LogicException('Cannot used internal session in Сáша HttpApp');
         };
         session_set_save_handler($callable, $callable, $callable, $callable, $callable, $callable, $callable);
     }
@@ -61,8 +61,8 @@ class Session
             $this->storage->open();
             self::dispatcher()->emit($event);
 
-            if (App::request()->getCookie($this->name)) {
-                $this->id = App::request()->getCookie($this->name)->getValue();
+            if (HttpApp::request()->getCookie($this->name)) {
+                $this->id = HttpApp::request()->getCookie($this->name)->getValue();
             }
 
             if (!$this->id) {
@@ -105,7 +105,7 @@ class Session
     private function create()
     {
         $this->id = md5(uniqid((string) rand(), true));
-        App::response()->addCookie(new Cookie($this->name, $this->id));
+        HttpApp::response()->addCookie(new Cookie($this->name, $this->id));
     }
 
     /**
@@ -113,9 +113,9 @@ class Session
      */
     private function addHeaders()
     {
-        App::response()->addHeader('Cache-Control', 'no-cache, no-store, must-revalidate'); // HTTP 1.1
-        App::response()->addHeader('Pragma', 'no-cache'); // HTTP 1.0
-        App::response()->addHeader('Expires', '-1'); // Proxies
+        HttpApp::response()->addHeader('Cache-Control', 'no-cache, no-store, must-revalidate'); // HTTP 1.1
+        HttpApp::response()->addHeader('Pragma', 'no-cache'); // HTTP 1.0
+        HttpApp::response()->addHeader('Expires', '-1'); // Proxies
     }
 
     /**
