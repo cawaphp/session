@@ -33,6 +33,6 @@ trait SessionFactory
 
         $item = new Session();
 
-        return DI::set(__METHOD__,  null, $item);
+        return DI::set(__METHOD__, null, $item);
     }
 }

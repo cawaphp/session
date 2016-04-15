@@ -91,8 +91,7 @@ class Session
 
             $this->addHeaders();
 
-            self::dispatcher()->addListener("app.end", function()
-            {
+            self::dispatcher()->addListener('app.end', function () {
                 $this->save();
             });
 
