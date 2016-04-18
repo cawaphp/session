@@ -13,8 +13,8 @@ declare (strict_types=1);
 
 namespace Cawa\Session;
 
-use Cawa\App\HttpFactory;
 use Cawa\App\HttpApp;
+use Cawa\App\HttpFactory;
 use Cawa\Core\DI;
 use Cawa\Events\DispatcherFactory;
 use Cawa\Events\TimerEvent;
