@@ -13,6 +13,7 @@ declare (strict_types=1);
 
 namespace Cawa\Session;
 
+use Cawa\App\HttpFactory;
 use Cawa\App\HttpApp;
 use Cawa\Core\DI;
 use Cawa\Events\DispatcherFactory;
@@ -22,6 +23,7 @@ use Cawa\Session\SessionStorage\AbstractStorage;
 
 class Session
 {
+    use HttpFactory;
     use DispatcherFactory;
 
     /**
@@ -61,8 +63,8 @@ class Session
             $this->storage->open();
             self::dispatcher()->emit($event);
 
-            if (HttpApp::request()->getCookie($this->name)) {
-                $this->id = HttpApp::request()->getCookie($this->name)->getValue();
+            if ($this->request()->getCookie($this->name)) {
+                $this->id = $this->request()->getCookie($this->name)->getValue();
             }
 
             if (!$this->id) {
@@ -105,7 +107,7 @@ class Session
     private function create()
     {
         $this->id = md5(uniqid((string) rand(), true));
-        HttpApp::response()->addCookie(new Cookie($this->name, $this->id));
+        $this->response()->addCookie(new Cookie($this->name, $this->id));
     }
 
     /**
@@ -113,9 +115,9 @@ class Session
      */
     private function addHeaders()
     {
-        HttpApp::response()->addHeader('Cache-Control', 'no-cache, no-store, must-revalidate'); // HTTP 1.1
-        HttpApp::response()->addHeader('Pragma', 'no-cache'); // HTTP 1.0
-        HttpApp::response()->addHeader('Expires', '-1'); // Proxies
+        $this->response()->addHeader('Cache-Control', 'no-cache, no-store, must-revalidate'); // HTTP 1.1
+        $this->response()->addHeader('Pragma', 'no-cache'); // HTTP 1.0
+        $this->response()->addHeader('Expires', '-1'); // Proxies
     }
 
     /**
