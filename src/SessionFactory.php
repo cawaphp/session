@@ -18,11 +18,6 @@ use Cawa\Core\DI;
 trait SessionFactory
 {
     /**
-     * @var array
-     */
-    private static $container = [];
-
-    /**
      * @return Session
      */
     private static function session() : Session
