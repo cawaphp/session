@@ -252,7 +252,6 @@ class Session
         return isset($this->data[$name]) ? $this->data[$name] : null;
     }
 
-
     /**
      * @param string $name
      *
@@ -299,6 +298,7 @@ class Session
     {
         $data = $this->get($name) ?: [];
         $data[] = $value;
+
         return $this->set($name, $data);
     }
 
@@ -311,6 +311,7 @@ class Session
     public function merge(string $name, $value) : self
     {
         $data = $this->get($name) ?: [];
+
         return $this->set($name, array_merge($data, $value));
     }
 
