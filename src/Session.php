@@ -252,6 +252,20 @@ class Session
         return isset($this->data[$name]) ? $this->data[$name] : null;
     }
 
+
+    /**
+     * @param string $name
+     *
+     * @return mixed
+     */
+    public function getFlush(string $name)
+    {
+        $return = $this->get($name);
+        $this->remove($name);
+
+        return $return;
+    }
+
     /**
      * @param string $name
      * @param $value
@@ -264,7 +278,7 @@ class Session
             $this->init();
         }
 
-        if (isset($this->data[$name]) && $this->data[$name] == $value) {
+        if (array_key_exists($name, $this->data) && $this->data[$name] == $value) {
             return $this;
         }
 
@@ -273,6 +287,31 @@ class Session
         $this->data[$name] = $value;
 
         return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param $value
+     *
+     * @return $this
+     */
+    public function push(string $name, $value) : self
+    {
+        $data = $this->get($name) ?: [];
+        $data[] = $value;
+        return $this->set($name, $data);
+    }
+
+    /**
+     * @param string $name
+     * @param $value
+     *
+     * @return $this
+     */
+    public function merge(string $name, $value) : self
+    {
+        $data = $this->get($name) ?: [];
+        return $this->set($name, array_merge($data, $value));
     }
 
     /**
