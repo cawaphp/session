@@ -56,6 +56,17 @@ class Session
         session_set_save_handler($callable, $callable, $callable, $callable, $callable, $callable, $callable);
     }
 
+    /**
+     * @return bool
+     */
+    private function haveCookie() : bool
+    {
+        return !is_null($this->request()->getCookie($this->name));
+    }
+
+    /**
+     *
+     */
     public function init()
     {
         if (!self::$init) {
@@ -245,6 +256,10 @@ class Session
      */
     public function get(string $name)
     {
+        if (!$this->haveCookie()) {
+            return null;
+        }
+
         if (self::$init == false) {
             $this->init();
         }
@@ -259,6 +274,10 @@ class Session
      */
     public function getFlush(string $name)
     {
+        if (!$this->haveCookie()) {
+            return null;
+        }
+
         $return = $this->get($name);
         $this->remove($name);
 
