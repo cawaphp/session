@@ -77,4 +77,24 @@ trait SessionTrait
 
         return $data;
     }
+
+    /**
+     * @param string|null $name
+     *
+     * @return bool
+     */
+    public function sessionRemove(string $name = null) : bool
+    {
+        if (!$name) {
+            $name = get_class();
+        }
+
+        if (!self::session()->exist($name)) {
+            return false;
+        }
+
+        self::session()->remove($name);
+
+        return true;
+    }
 }
