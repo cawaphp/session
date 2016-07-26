@@ -61,7 +61,7 @@ class Session
      */
     private function haveCookie() : bool
     {
-        return !is_null($this->request()->getCookie($this->name));
+        return !is_null(self::request()->getCookie($this->name));
     }
 
     /**
@@ -74,8 +74,8 @@ class Session
             $this->storage->open();
             self::dispatcher()->emit($event);
 
-            if ($this->request()->getCookie($this->name)) {
-                $this->id = $this->request()->getCookie($this->name)->getValue();
+            if (self::request()->getCookie($this->name)) {
+                $this->id = self::request()->getCookie($this->name)->getValue();
             }
 
             if (!$this->id) {
@@ -118,7 +118,7 @@ class Session
     private function create()
     {
         $this->id = md5(uniqid((string) rand(), true));
-        $this->response()->addCookie(new Cookie($this->name, $this->id));
+        self::response()->addCookie(new Cookie($this->name, $this->id));
     }
 
     /**
@@ -126,9 +126,9 @@ class Session
      */
     private function addHeaders()
     {
-        $this->response()->addHeader('Cache-Control', 'no-cache, no-store, must-revalidate'); // HTTP 1.1
-        $this->response()->addHeader('Pragma', 'no-cache'); // HTTP 1.0
-        $this->response()->addHeader('Expires', '-1'); // Proxies
+        self::response()->addHeader('Cache-Control', 'no-cache, no-store, must-revalidate'); // HTTP 1.1
+        self::response()->addHeader('Pragma', 'no-cache'); // HTTP 1.0
+        self::response()->addHeader('Expires', '-1'); // Proxies
     }
 
     /**
