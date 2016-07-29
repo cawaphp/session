@@ -72,7 +72,7 @@ class Session
         if (!self::$init) {
             $event = new TimerEvent('session.open');
             $this->storage->open();
-            self::dispatcher()->emit($event);
+            self::emit($event);
 
             if (self::request()->getCookie($this->name)) {
                 $this->id = self::request()->getCookie($this->name)->getValue();
@@ -95,7 +95,7 @@ class Session
                 if (isset($length)) {
                     $event->setData(['length' => $length]);
                 }
-                self::dispatcher()->emit($event);
+                self::emit($event);
 
                 if ($maxDuration > $this->accessTime + $maxDuration) {
                     $this->create();
@@ -390,7 +390,7 @@ class Session
         }
 
         $event->setData(['length' => $return]);
-        self::dispatcher()->emit($event);
+        self::emit($event);
 
         return $return === false ? false : true;
     }
