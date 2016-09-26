@@ -23,7 +23,7 @@ trait SessionSleepTrait
     /**
      * @param array $data
      *
-     * @return $this
+     * @return $this|self
      */
     abstract protected static function sessionWakeup(array $data);
 }

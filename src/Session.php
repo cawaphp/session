@@ -13,7 +13,6 @@ declare (strict_types=1);
 
 namespace Cawa\Session;
 
-use Cawa\App\HttpApp;
 use Cawa\App\HttpFactory;
 use Cawa\Core\DI;
 use Cawa\Events\DispatcherFactory;
@@ -188,7 +187,7 @@ class Session
     /**
      * @param string $name
      *
-     * @return $this
+     * @return $this|self
      */
     public function setName(string $name) : self
     {
@@ -288,7 +287,7 @@ class Session
      * @param string $name
      * @param $value
      *
-     * @return $this
+     * @return $this|self
      */
     public function set(string $name, $value) : self
     {
@@ -311,7 +310,7 @@ class Session
      * @param string $name
      * @param $value
      *
-     * @return $this
+     * @return $this|self
      */
     public function push(string $name, $value) : self
     {
@@ -325,7 +324,7 @@ class Session
      * @param string $name
      * @param $value
      *
-     * @return $this
+     * @return $this|self
      */
     public function merge(string $name, $value) : self
     {
@@ -337,7 +336,7 @@ class Session
     /**
      * @param string $name
      *
-     * @return $this
+     * @return $this|self
      */
     public function remove(string $name) : self
     {
