@@ -172,7 +172,7 @@ class Session
      *
      * @var string
      */
-    private $name = 'sid';
+    private $name;
 
     /**
      * Gets the name of the cookie.
@@ -349,6 +349,28 @@ class Session
         unset($this->data[$name]);
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function destroy() : bool
+    {
+        if (self::$init == false) {
+            $this->init();
+        }
+
+        $event = new TimerEvent('session.destroy');
+
+        self::$init = false;
+
+        $return = $this->storage->destroy($this->id);
+        self::response()->clearCookie(new Cookie($this->name));
+
+        self::emit($event);
+
+        return $return;
+
     }
 
     /**
