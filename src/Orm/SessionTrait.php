@@ -20,6 +20,25 @@ trait SessionTrait
     use SessionFactory;
 
     /**
+     * @param $class
+     * @param bool $autoload
+     *
+     * @return array
+     */
+    private function classUsedRecursive($class, $autoload = true)
+    {
+        $traits = [];
+        do {
+            $traits = array_merge(class_uses($class, $autoload), $traits);
+        } while ($class = get_parent_class($class));
+        foreach ($traits as $trait => $same) {
+            $traits = array_merge(class_uses($trait, $autoload), $traits);
+        }
+
+        return array_unique($traits);
+    }
+
+    /**
      * @param string $name
      *
      * @return void
@@ -27,11 +46,11 @@ trait SessionTrait
     public function sessionSave(string $name = null)
     {
         if (!$name) {
-            $name = get_class();
+            $name = get_called_class();
         }
 
         $data = $this;
-        if (in_array(SessionSleepTrait::class, class_uses($this))) {
+        if (in_array(SessionSleepTrait::class, $this->classUsedRecursive($this))) {
             $data = $this->sessionSleep();
         }
 
@@ -60,7 +79,7 @@ trait SessionTrait
     public static function sessionReload(string $name = null)
     {
         if (!$name) {
-            $name = get_class();
+            $name = get_called_class();
         }
 
         $data = self::session()->get($name);
@@ -86,7 +105,7 @@ trait SessionTrait
     public function sessionRemove(string $name = null) : bool
     {
         if (!$name) {
-            $name = get_class();
+            $name = get_called_class();
         }
 
         if (!self::session()->exist($name)) {

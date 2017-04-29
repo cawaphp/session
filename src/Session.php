@@ -43,8 +43,7 @@ class Session
         $class = DI::config()->getIfExists('session/storage/class') ?? '\\Cawa\\Session\\SessionStorage\\FileStorage';
         $args = DI::config()->getIfExists('session/storage/arguments') ?? [];
 
-        $this->storage = new $class;
-        call_user_func_array([$this->storage, '__construct'], $args);
+        $this->storage = new $class(...$args);
 
         // disable internal session handler
         $callable = function () {
@@ -83,7 +82,7 @@ class Session
                 $event = new TimerEvent('session.read');
                 $readData = $this->storage->read($this->id);
 
-                $maxDuration = DI::config()->getIfExists('session/maxDuration') ?? ini_get('session.gc_maxlifetime');
+                $maxDuration = $this->storage->getDuration();
 
                 if ($readData === false) {
                     $this->create();
@@ -92,11 +91,16 @@ class Session
                 }
 
                 if (isset($length)) {
-                    $event->setData(['length' => $length]);
+                    $event->setData([
+                        'length' => $length,
+                        'startTime' => date('Y-m-d H:i:s', $this->startTime),
+                        'accessTime' =>  date('Y-m-d H:i:s', $this->accessTime)
+                    ]);
                 }
                 self::emit($event);
 
-                if ($maxDuration > $this->accessTime + $maxDuration) {
+                if ($readData !== false && $this->accessTime + $maxDuration < time()) {
+                    $this->storage->destroy($this->id);
                     $this->create();
                 }
             }
@@ -117,6 +121,9 @@ class Session
     private function create()
     {
         $this->id = md5(uniqid((string) rand(), true));
+        $this->accessTime = null;
+        $this->startTime = time();
+        $this->data = [];
         self::response()->addCookie(new Cookie($this->name, $this->id));
     }
 
@@ -295,7 +302,7 @@ class Session
             $this->init();
         }
 
-        if (array_key_exists($name, $this->data) && $this->data[$name] == $value) {
+        if (array_key_exists($name, $this->data) && $this->data[$name] === $value) {
             return $this;
         }
 
@@ -342,6 +349,10 @@ class Session
     {
         if (self::$init == false) {
             $this->init();
+        }
+
+        if (!isset($this->data[$name])) {
+            return $this;
         }
 
         $this->changed = true;
@@ -395,18 +406,24 @@ class Session
             return true;
         }
 
-        $this->accessTime = time();
-        if (!$this->startTime) {
-            $this->startTime = $this->accessTime;
+        if (!$this->accessTime) {
+            $this->accessTime = time();
         }
 
         $ttl = DI::config()->getIfExists('session/refreshTtl') ?? 60;
+
         if (!$this->changed && $this->accessTime + $ttl < time()) {
+            $this->accessTime = time();
+
             $event = new TimerEvent('session.touch');
             $return = $this->storage->touch($this->id, $this->data, $this->startTime, $this->accessTime);
-        } else {
+        } elseif ($this->changed) {
+            $this->accessTime = time();
+
             $event = new TimerEvent('session.write');
             $return = $this->storage->write($this->id, $this->data, $this->startTime, $this->accessTime);
+        } else {
+            return true;
         }
 
         $event->setData(['length' => $return]);

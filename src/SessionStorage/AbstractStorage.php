@@ -13,8 +13,18 @@ declare (strict_types = 1);
 
 namespace Cawa\Session\SessionStorage;
 
+use Cawa\Core\DI;
+
 abstract class AbstractStorage
 {
+    /**
+     * @return int
+     */
+    public function getDuration() : int
+    {
+        return (int) (DI::config()->getIfExists('session/maxDuration') ?? ini_get('session.gc_maxlifetime'));
+    }
+
     /**
      * @var callable
      */
