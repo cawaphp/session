@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-declare (strict_types = 1);
+declare(strict_types = 1);
 
 namespace Cawa\Session\SessionStorage;
 
@@ -61,7 +61,7 @@ abstract class AbstractStorage
     abstract public function open() : bool;
 
     /**
-     * return false if the session doesn't exists
+     * return false if the session doesn't exists.
      *
      * @param string $id
      *
@@ -80,7 +80,7 @@ abstract class AbstractStorage
     abstract public function write(string $id, array $data, int $startTime, int $accessTime);
 
     /**
-     * Increment last access date
+     * Increment last access date.
      *
      * @param string $id
      * @param array $data

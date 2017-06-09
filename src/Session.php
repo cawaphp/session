@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-declare (strict_types = 1);
+declare(strict_types = 1);
 
 namespace Cawa\Session;
 
@@ -94,7 +94,7 @@ class Session
                     $event->setData([
                         'length' => $length,
                         'startTime' => date('Y-m-d H:i:s', $this->startTime),
-                        'accessTime' =>  date('Y-m-d H:i:s', $this->accessTime)
+                        'accessTime' => date('Y-m-d H:i:s', $this->accessTime),
                     ]);
                 }
                 self::emit($event);
@@ -116,7 +116,6 @@ class Session
     }
 
     /**
-     * @return void
      */
     private function create()
     {
@@ -128,7 +127,7 @@ class Session
     }
 
     /**
-     * add expiration headers to avoid caching
+     * add expiration headers to avoid caching.
      */
     private function addHeaders()
     {
@@ -138,7 +137,7 @@ class Session
     }
 
     /**
-     * is the session is init and data loaded
+     * is the session is init and data loaded.
      *
      * @var bool
      */
@@ -153,14 +152,14 @@ class Session
     }
 
     /**
-     * is the data have changed
+     * is the data have changed.
      *
      * @var bool
      */
     private $changed = false;
 
     /**
-     * The session id
+     * The session id.
      *
      * @var string
      */
@@ -175,7 +174,7 @@ class Session
     }
 
     /**
-     * The name of the session cookie
+     * The name of the session cookie.
      *
      * @var string
      */
@@ -205,7 +204,7 @@ class Session
 
         if (empty($name)) {
             throw new \InvalidArgumentException('The cookie name cannot be empty.');
-        };
+        }
 
         $this->name = $name;
 
@@ -394,7 +393,7 @@ class Session
             $this->init();
         }
 
-        return isset($this->data[$name]) ? true  : false;
+        return isset($this->data[$name]) ? true : false;
     }
 
     /**
